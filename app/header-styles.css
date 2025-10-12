@@ -1,0 +1,75 @@
+.mega-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 50;
+}
+
+.mega-menu-active {
+  display: block;
+}
+
+.nav-item:hover .mega-menu {
+  display: block;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: white;
+  transition: all 0.3s;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #4a5568;
+  text-decoration: none;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  color: #2b6cb0;
+  background-color: #f7fafc;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid white;
+  border-radius: 0.25rem;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.cta-button:hover {
+  background-color: white;
+  color: #002b5b;
+}
