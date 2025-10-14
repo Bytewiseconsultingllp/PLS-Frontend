@@ -78,6 +78,8 @@
     "gcp-metadata": "latest",
     "gel": "latest",
     "input-otp": "1.4.1",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "kerberos": "latest",
     "knex": "latest",
     "kysely": "latest",

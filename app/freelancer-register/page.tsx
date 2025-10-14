@@ -13,6 +13,8 @@ import SoftSkills from "./components/soft-skills"
 import Certifications from "./components/certifications"
 import ProjectQuoting from "./components/project-quoting"
 import LegalAgreements from "./components/legal-agreements"
+import router from "next/dist/shared/lib/router/router"
+import { useRouter } from "next/router"
 
 // Define interfaces for type safety
 export interface FreelancerData {
@@ -505,24 +507,22 @@ export default function FreelancerRegisterPage() {
         )
       default:
         // Show a notification if the API is not available
-        useEffect(() => {
-          const sendFormData = async () => {
-            try {
-              const response = await fetch("http://localhost:8000/api/v1/freelancer/register", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-              })
-              if (!response.ok) {
-                throw new Error("Failed to submit form data")
-              }
-              // Optionally handle response here
-            } catch (error) {
-              console.error("Error submitting form data:", error)
-            }
-          }
+        const router = useRouter();
+
+  useEffect(() => {
+    const sendFormData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/apiv1/freelancerregister', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+        if (!response.ok) throw new Error("Failed to submit form data");
+        router.push('/features/freelancer/success');
+      } catch (error) {
+        console.error("Error submitting form data:", error);
+      }
+    };
           sendFormData()
           // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [])
