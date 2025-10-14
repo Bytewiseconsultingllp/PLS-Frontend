@@ -50,6 +50,7 @@ export default function RequestQuoteCard() {
     setSelectedOption(option);
     if (option === "quote") {
       const userData = await getUserFormData(); // Fetch data from lib
+      console.log("User Data for PDF:", userData);
       generatePDF(userData);
     }
   };

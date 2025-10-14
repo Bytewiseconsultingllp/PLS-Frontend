@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 interface ProceedOptionsProps {
   projectData?: any
@@ -377,7 +379,62 @@ export default function ProceedOptions({ projectData, onUpdate }: ProceedOptions
       })
     }
   }
-
+  const generatePDF = (data: any) => {
+     const doc = new jsPDF();
+     console.log("Generating PDF with data:", localStorage.getItem("submittedProject"));
+    data = localStorage.getItem("submittedProject") ? JSON.parse(localStorage.getItem("submittedProject") || "{}") : data;
+    // const userData = localStorage.getItem("registeredUser") ? JSON.parse(localStorage.getItem("registeredUser") || "{}") : null; 
+    // === HEADER SECTION ===
+     const logoUrl = "/logo.png"; // Path to your logo in public folder
+    //  doc.addImage(logoUrl, "PNG", 15, 10, 25, 25); // Left-aligned logo
+     doc.setFontSize(18);
+     doc.text("Prime Logic Solutions", 105, 25, { align: "center" });
+ 
+     doc.setFontSize(12);
+     doc.setTextColor(100);
+     doc.text("Formal Quotation Document", 105, 35, { align: "center" });
+ 
+     doc.line(15, 40, 195, 40); // Divider line
+ 
+     // === BODY: QUOTE INFORMATION ===
+     const rows = [
+       ["Name", data.clientName || "—"],
+       ["Phone", data.clientPhone || "—"],      
+       ["Company", data.clientCompany || "—"],
+       ["Email", data.clientEmail || "—"],
+       ["Selected Services", data.projectType || "—"],
+       ["Industries", data.industries?.join(", ") || "—"],
+       ["Technologies", data.technologies?.join(", ") || "—"],
+       ["Features", data.features?.join(", ") || "—"],
+       ["Special Offers", data.specialOffers || "—"],
+       ["Timeline", data.timeline || "—"],
+       ["Estimated Budget", data.budget || "—"],
+       ["Priority", data.priority || "—"],
+     ];
+ 
+     autoTable(doc, {
+       startY: 50,
+       head: [["Field", "Details"]],
+       body: rows,
+       theme: "striped",
+       styles: { fontSize: 11 },
+       headStyles: { fillColor: [0, 48, 135] },
+     });
+ 
+     // === FOOTER ===
+     const finalY = (doc as any).lastAutoTable.finalY + 20;
+     doc.setFontSize(10);
+     doc.text(
+       "Thank you for choosing Prime Logic Solutions.\nThis quote is valid for 30 days from the date of issue.",
+       15,
+       finalY
+     );
+ 
+     doc.text("Authorized Signature:", 15, finalY + 20);
+     doc.line(60, finalY + 20, 150, finalY + 20);
+ 
+     doc.save(`Formal_Quote_${data.name || "Client"}.pdf`);
+   };
   const handleProceed = async () => {
     if (selectedOption === "secure") {
       // Get form data first
@@ -398,6 +455,7 @@ export default function ProceedOptions({ projectData, onUpdate }: ProceedOptions
       setUserFormData(formData)
       setShowRegistrationModal(true)
     } else if (selectedOption === "quote") {
+      generatePDF(FormData)
       setTimeout(() => {
         const link = document.createElement("a")
         link.href = "/project-quote.pdf" // This would be a real PDF in production
@@ -405,7 +463,6 @@ export default function ProceedOptions({ projectData, onUpdate }: ProceedOptions
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-
         if (onUpdate) {
           onUpdate({
             selectedOption,
