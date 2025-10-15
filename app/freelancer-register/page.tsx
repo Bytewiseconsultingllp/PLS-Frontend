@@ -518,7 +518,7 @@ export default function FreelancerRegisterPage() {
           body: JSON.stringify(formData),
         });
         if (!response.ok) throw new Error("Failed to submit form data");
-        router.push('/features/freelancer/success');
+        router.push('/freelancer/success');
       } catch (error) {
         console.error("Error submitting form data:", error);
       }
