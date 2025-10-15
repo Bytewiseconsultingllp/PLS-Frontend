@@ -69,7 +69,7 @@ export default function Appointment() {
       }
 
       // Make sure the API URL is properly set in your environment variables
-      const response = await fetch(`http://localhost:8000/api/v1/consultation/requestAConsultation/register`, {
+      const response = await fetch(`http://localhost:8000/api/v1/consultation/requestAConsultation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataToSubmit),

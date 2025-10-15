@@ -471,7 +471,6 @@ export default function ProceedOptions({ projectData, onUpdate }: ProceedOptions
           })
         }
       }, 500)
-      alert("PDF backend not implemented yet. Contact your backend developer.")
     } else if (selectedOption === "consultation") {
       if (onUpdate) {
         onUpdate({
