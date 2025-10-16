@@ -75,12 +75,12 @@ export default function PaymentSuccessPage() {
       return () => clearTimeout(timer)
     } else if (paymentVerified && redirectCountdown === 0) {
       // Redirect to client dashboard
-      window.location.href = "/client/dashboard"
+      window.location.href = "https://primelogicd.vercel.app/login"
     }
   }, [paymentVerified, redirectCountdown])
 
   const handleRedirectNow = () => {
-    window.location.href = "/client/dashboard"
+    window.location.href = "https://primelogicd.vercel.app/login"
   }
 
   if (isVerifying) {
