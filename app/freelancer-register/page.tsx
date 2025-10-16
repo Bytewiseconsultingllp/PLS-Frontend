@@ -13,8 +13,7 @@ import SoftSkills from "./components/soft-skills"
 import Certifications from "./components/certifications"
 import ProjectQuoting from "./components/project-quoting"
 import LegalAgreements from "./components/legal-agreements"
-import router from "next/dist/shared/lib/router/router"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 // Define interfaces for type safety
 export interface FreelancerData {
@@ -266,6 +265,8 @@ export default function FreelancerRegisterPage() {
     return 0
   })
 
+  const router = useRouter()
+
   // Update form data
   const updateFormData = useCallback((section: keyof FreelancerData, data: any) => {
     setFormData((prev) => {
@@ -354,6 +355,33 @@ export default function FreelancerRegisterPage() {
         return allAgreementsAccepted && identityVerified
       default:
         return false
+    }
+  }
+
+  const handleCompleteRegistration = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/apiv1/freelancerregister", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) throw new Error("Failed to submit form data")
+
+      // Clear saved progress after successful submission
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(STORAGE_KEYS.FORM_DATA)
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_STEP)
+      }
+
+      // Redirect to success page with freelancer details
+      const { fullName, email, country } = formData.whoYouAre
+      router.push(
+        `/freelancer/success?name=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`,
+      )
+    } catch (error) {
+      console.error("Error submitting form data:", error)
+      alert("Registration failed. Please try again.")
     }
   }
 
@@ -506,32 +534,6 @@ export default function FreelancerRegisterPage() {
           />
         )
       default:
-        // Show a notification if the API is not available
-        const router = useRouter();
-
-  useEffect(() => {
-    const sendFormData = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/apiv1/freelancerregister', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-        if (!response.ok) throw new Error("Failed to submit form data");
-        router.push('/freelancer/success');
-      } catch (error) {
-        console.error("Error submitting form data:", error);
-      }
-    };
-          sendFormData()
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [])
-
-        return (
-          <div className="p-8 text-center text-red-600">
-            Unable to render this step. Form data has been sent to the server.
-          </div>
-        )
         return null
     }
   }
@@ -541,7 +543,7 @@ export default function FreelancerRegisterPage() {
     return STEPS.map((step, index) => ({
       ...step,
       isValid: isStepValid(index),
-      component: null, // We don't need this anymore
+      component: null,
     }))
   }, [formData]) // Only recalculate when formData changes
 
