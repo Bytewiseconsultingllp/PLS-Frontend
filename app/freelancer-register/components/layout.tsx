@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { ArrowRight, ArrowLeft, Check, Menu, X } from "lucide-react"
 import { FreelancerData } from "../page"
+import { useRouter } from "next/navigation"
 import router from "next/router"
 
 interface Step {
@@ -196,17 +197,29 @@ export function FreelancerRegisterLayout({
                 Step {currentStepIndex + 1} of {steps.length}
               </div>
 
-                // Replace the onClick handler for your next/complete button with this snippet:
-
-<button
+                <button
   type="button"
   onClick={async () => {
     if (currentStepIndex === steps.length - 1) {
-      // Redirect immediately to success page when clicking complete on last step
-      const { fullName, email, country } = formData.whoYouAre;
-      router.push(
-        `/freelancer/success?name=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`
-      );
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/freelancer/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to submit form data");
+        }
+        const { fullName, email, country } = formData.whoYouAre;
+        router.push(
+          `/freelancer-register/success?name=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`
+        );
+      } catch (error) {
+        console.error("Submission failed", error);
+        alert("Submission failed. Please try again.");
+      }
     } else {
       goToNextStep();
     }
@@ -223,7 +236,6 @@ export function FreelancerRegisterLayout({
     className={`w-4 h-4 ${steps[currentStepIndex]?.isValid ? "text-white" : "text-gray-400"}`}
   />
 </button>
-
             </div>
           </div>
         </div>
