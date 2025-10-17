@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const backendUrl = '${process.env.NEXT_PUBLIC_API_URL}'
     const jwtToken = process.env.JWT_TOKEN || "YOUR_JWT_TOKEN"
 
-    const response = await fetch(`${backendUrl}/api/v1/payment/create-checkout-session`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/v1/payment/create-checkout-session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

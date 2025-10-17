@@ -1,10 +1,22 @@
 import type { NextRequest } from "next/server"
 
-const API_BASE = process.env.VISITORS_API_URL || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/visitors`
 const API_TOKEN = process.env.VISITORS_API_TOKEN
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 function authHeaders() {
   return API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {}
+}
+
+function buildApiUrl(path: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!baseUrl) {
+    throw new Error(
+      "NEXT_PUBLIC_API_URL environment variable is not set. Please configure it in your Vercel project settings or .env.local file.",
+    )
+  }
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`
+  return `${normalizedBase}${normalizedPath}`
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -15,7 +27,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     if (auth.Authorization) {
       headers["Authorization"] = auth.Authorization
     }
-    const upstream = await fetch(`${API_BASE}/api/visitor/${params.id}`, {
+    const url = buildApiUrl(`api/visitor/${params.id}`)
+    const upstream = await fetch(url, {
       method: "PUT",
       headers,
       body: JSON.stringify(body),
@@ -40,9 +53,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const upstream = await fetch(`${API_BASE}/api/visitor/${params.id}`, {
+    const headers: Record<string, string> = {}
+    const auth = authHeaders()
+    if (auth.Authorization) {
+      headers["Authorization"] = auth.Authorization
+    }
+    const url = buildApiUrl(`api/visitor/${params.id}`)
+    const upstream = await fetch(url, {
       method: "DELETE",
-      headers: Object.fromEntries(Object.entries(authHeaders()).filter(([_, v]) => v !== undefined)),
+      headers,
     })
     const data = await upstream.json().catch(() => ({}))
     return new Response(JSON.stringify(data), {

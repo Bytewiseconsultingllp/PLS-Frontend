@@ -40,7 +40,7 @@ export default function ContactUsPage() {
     try {
       setIsLoading(true)
       // Update to use the local API route instead of the external URL
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/contactUs/createMessage`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}contactUs/createMessage`, {
         firstName: firstname,
         lastName: lastname,
         subject: subject,

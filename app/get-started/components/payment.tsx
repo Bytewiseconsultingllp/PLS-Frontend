@@ -57,7 +57,7 @@ function RegistrationModal({ isOpen, onClose, onSuccess, userEmail, userName }: 
     setError(null)
 
     try {
-      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ function RegistrationModal({ isOpen, onClose, onSuccess, userEmail, userName }: 
     setError(null)
 
     try {
-      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/verifyEmail', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/v1/auth/verifyEmail`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -598,7 +598,7 @@ export default function ProceedOptions({ projectData, onUpdate }: ProceedOptions
 
       let response
       try {
-        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/project-builder`, {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/v1/project-builder`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -723,7 +723,7 @@ export default function ProceedOptions({ projectData, onUpdate }: ProceedOptions
       const authToken = userData?.token || localStorage.getItem('authToken')
 
       // Create checkout session - Call backend directly
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/payment/create-checkout-session`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/v1/payment/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
