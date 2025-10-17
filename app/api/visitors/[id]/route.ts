@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server"
 
-const API_BASE = process.env.VISITORS_API_URL || "http://localhost:8000"
+const API_BASE = process.env.VISITORS_API_URL || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/visitors`
 const API_TOKEN = process.env.VISITORS_API_TOKEN
 
 function authHeaders() {

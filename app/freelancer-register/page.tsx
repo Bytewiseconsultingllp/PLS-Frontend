@@ -360,7 +360,7 @@ export default function FreelancerRegisterPage() {
 
   const handleCompleteRegistration = async () => {
     try {
-      const response = await fetch("http://localhost:8000/apiv1/freelancerregister", {
+      const response = await fetch("${process.env.NEXT_PUBLIC_API_URL}/apiv1/freelancerregister", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
