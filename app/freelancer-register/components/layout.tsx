@@ -29,6 +29,20 @@ interface FreelancerRegisterLayoutProps {
   formData: FreelancerData
 }
 
+function buildApiUrl(path: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!baseUrl) {
+    throw new Error("NEXT_PUBLIC_API_URL environment variable is not set")
+  }
+
+  // Remove trailing slash from base URL
+  const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl
+  // Ensure path starts with /
+  const cleanPath = path.startsWith("/") ? path : `/${path}`
+
+  return `${cleanBaseUrl}${cleanPath}`
+}
+
 export function FreelancerRegisterLayout({
   children,
   currentStepIndex,
@@ -42,6 +56,8 @@ export function FreelancerRegisterLayout({
   formData
 }: FreelancerRegisterLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Close sidebar when navigating on mobile
   useEffect(() => {
@@ -198,44 +214,49 @@ export function FreelancerRegisterLayout({
               </div>
 
                 <button
-  type="button"
-  onClick={async () => {
-    if (currentStepIndex === steps.length - 1) {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/v1/freelancer/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to submit form data");
-        }
-        const { fullName, email, country } = formData.whoYouAre;
-        router.push(
-          `/freelancer-register/success?name=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`
-        );
-      } catch (error) {
-        console.error("Submission failed", error);
-        alert("Submission failed. Please try again.");
-      }
-    } else {
-      goToNextStep();
-    }
-  }}
-  disabled={!steps[currentStepIndex]?.isValid}
-  className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 rounded-md transition-colors ${
-    steps[currentStepIndex]?.isValid
-      ? "bg-[#FF6B35] text-white hover:bg-[#e55a29]"
-      : "bg-white border border-gray-300 text-gray-400 cursor-not-allowed"
-  }`}
->
-  {currentStepIndex === steps.length - 1 ? "Complete" : "Next"}
-  <ArrowRight
-    className={`w-4 h-4 ${steps[currentStepIndex]?.isValid ? "text-white" : "text-gray-400"}`}
-  />
-</button>
+                type="button"
+                onClick={async () => {
+                  if (currentStepIndex === steps.length - 1) {
+                    setIsSubmitting(true)
+                    try {
+                      const apiUrl = buildApiUrl("api/v1/freelancer/register")
+                      const response = await fetch(apiUrl, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(formData),
+                      })
+
+                      if (!response.ok) {
+                        throw new Error("Failed to submit form data")
+                      }
+
+                      const { fullName, email, country } = formData.whoYouAre
+                      router.push(
+                        `/freelancer-register/success?name=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&country=${encodeURIComponent(country)}`,
+                      )
+                    } catch (error) {
+                      console.error("Submission failed", error)
+                      alert("Submission failed. Please try again.")
+                      setIsSubmitting(false)
+                    }
+                  } else {
+                    goToNextStep()
+                  }
+                }}
+                disabled={!steps[currentStepIndex]?.isValid || isSubmitting}
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 rounded-md transition-colors ${
+                  steps[currentStepIndex]?.isValid && !isSubmitting
+                    ? "bg-[#FF6B35] text-white hover:bg-[#e55a29]"
+                    : "bg-white border border-gray-300 text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {currentStepIndex === steps.length - 1 ? (isSubmitting ? "Submitting..." : "Complete") : "Next"}
+                <ArrowRight
+                  className={`w-4 h-4 ${steps[currentStepIndex]?.isValid && !isSubmitting ? "text-white" : "text-gray-400"}`}
+                />
+              </button>
             </div>
           </div>
         </div>
