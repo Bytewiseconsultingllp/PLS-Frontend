@@ -202,7 +202,7 @@ export function FreelancerRegisterLayout({
   onClick={async () => {
     if (currentStepIndex === steps.length - 1) {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/freelancer/register", {
+        const response = await fetch("${process.env.NEXT_PUBLIC_API_URL}/api/v1/freelancer/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 export async function GET(req: Request) {
-  const baseUrl = process.env.VISITORS_API_URL || "http://localhost:8000"
+  const baseUrl = process.env.VISITORS_API_URL || `${process.env.NEXT_PUBLIC_API_URL}`
   const token = process.env.VISITORS_API_TOKEN
 
   if (!token) {
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const baseUrl = process.env.VISITORS_API_URL || "http://localhost:8000"
+  const baseUrl = process.env.VISITORS_API_URL || `${process.env.NEXT_PUBLIC_API_URL}`
   const token = process.env.VISITORS_API_TOKEN
   const url = `${baseUrl.replace(/\/$/, "")}/api/visitor`
 

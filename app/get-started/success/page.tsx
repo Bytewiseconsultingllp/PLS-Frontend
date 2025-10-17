@@ -34,7 +34,7 @@ export default function PaymentSuccessPage() {
       if (sessionId) {
         try {
           // In a real app, you would verify the payment with your backend
-          console.log("[v0] Verifying payment for session:", sessionId)
+          console.log("Verifying payment for session:", sessionId)
 
           // Simulate API call delay
           await new Promise((resolve) => setTimeout(resolve, 2000))
@@ -75,12 +75,12 @@ export default function PaymentSuccessPage() {
       return () => clearTimeout(timer)
     } else if (paymentVerified && redirectCountdown === 0) {
       // Redirect to client dashboard
-      window.location.href = "https://primelogicd.vercel.app/login"
+      window.location.href = "https://cms.primelogicsol.com/login"
     }
   }, [paymentVerified, redirectCountdown])
 
   const handleRedirectNow = () => {
-    window.location.href = "https://primelogicd.vercel.app/login"
+    window.location.href = "https://cms.primelogicsol.com/login"
   }
 
   if (isVerifying) {
