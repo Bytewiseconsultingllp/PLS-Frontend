@@ -1,5 +1,16 @@
+function buildApiUrl(path: string, search = ""): string {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!baseUrl) {
+    throw new Error(
+      "NEXT_PUBLIC_API_URL environment variable is not set. Please configure it in your Vercel project settings or .env.local file.",
+    )
+  }
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`
+  return `${normalizedBase}${normalizedPath}${search}`
+}
+
 export async function GET(req: Request) {
-  const baseUrl = process.env.VISITORS_API_URL || `${process.env.NEXT_PUBLIC_API_URL}`
   const token = process.env.VISITORS_API_TOKEN
 
   if (!token) {
@@ -7,10 +18,10 @@ export async function GET(req: Request) {
   }
 
   const incomingUrl = new URL(req.url)
-  const proxyUrl = `${baseUrl.replace(/\/$/, "")}/api/visitor${incomingUrl.search}`
+  const apiUrl = buildApiUrl("api/visitor", incomingUrl.search)
 
   try {
-    const res = await fetch(proxyUrl, {
+    const res = await fetch(apiUrl, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -38,9 +49,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const baseUrl = process.env.VISITORS_API_URL || `${process.env.NEXT_PUBLIC_API_URL}`
   const token = process.env.VISITORS_API_TOKEN
-  const url = `${baseUrl.replace(/\/$/, "")}/api/visitor`
 
   let payload: unknown
   try {
@@ -50,7 +59,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const upstream = await fetch(url, {
+    const apiUrl = buildApiUrl("api/visitor")
+    const upstream = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

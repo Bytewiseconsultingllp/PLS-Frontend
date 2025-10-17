@@ -39,7 +39,7 @@ export default function RegisterYourself({
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
 
   // Visitor API endpoint
-  const VISITOR_API_URL =`${process.env.NEXT_PUBLIC_API_URL}/visitor/register`
+  const VISITOR_API_URL =`${process.env.NEXT_PUBLIC_API_URL}visitor/register`
 
   // Form validation function
   const validateForm = () => {
